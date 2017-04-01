@@ -1,0 +1,79 @@
+
+
+
+// Timothy Baker
+// cs361
+// Assg1: Wrestling Simulator
+//
+// tourneyWeight.cpp
+
+#include "tourneyWeight.h"
+
+/////// determine wrestler with most wins
+///////
+     //
+     //
+     //     bool most_wins(const wrestler* one,const wrestler* two)
+     //   {
+     //     return one->get_wins() < two->get_wins();
+     //}
+
+/////// constructor for tourney weight
+///////
+     //
+     //
+     tourney_weight::tourney_weight(int wc, wrestler* t1, wrestler* t2, wrestler* t3, wrestler* t4, wrestler* t5, wrestler* t6, wrestler* t7, wrestler* t8)
+     {
+
+      wrestler* temp_ptr= new wrestler;
+
+      if(t2==NULL){t2=temp_ptr;}
+      if(t3==NULL){t3=temp_ptr;}
+      if(t4==NULL){t4=temp_ptr;}
+      if(t5==NULL){t5=temp_ptr;}
+      if(t6==NULL){t6=temp_ptr;}
+      if(t7==NULL){t7=temp_ptr;}
+      if(t8==NULL){t8=temp_ptr;}
+
+     list<wrestler> tourney_wrestlers;
+     list<wrestler>::iterator tourney_wrestlers_itr;
+	
+     tourney_wrestlers.push_back(*t1);
+     tourney_wrestlers.push_back(*t2);
+     tourney_wrestlers.push_back(*t3);
+     tourney_wrestlers.push_back(*t4);
+     tourney_wrestlers.push_back(*t5);
+     tourney_wrestlers.push_back(*t6);
+     tourney_wrestlers.push_back(*t7);
+     tourney_wrestlers.push_back(*t8);
+
+     tourney_wrestlers.sort();
+     
+     tourney_wrestlers_itr=tourney_wrestlers.begin();
+     seed8=&*tourney_wrestlers_itr;
+     tourney_wrestlers_itr++;
+     seed7=&*tourney_wrestlers_itr; 
+     tourney_wrestlers_itr++;
+     seed6=&*tourney_wrestlers_itr;
+     tourney_wrestlers_itr++;
+     seed5=&*tourney_wrestlers_itr;
+     tourney_wrestlers_itr++;
+     seed4=&*tourney_Wrestlers_itr;
+     tourney_wrestlers_itr++;
+     seed3=&*tourney_wrestlers_itr;
+     tourney_wrestlers_itr++;
+     seed2=&*tourney_wrestlers_itr;
+     tourney_wrestlers_itr++;
+     seed1=&*tourney_wrestlers_itr;
+
+     for(tourney_wrestlers_itr=tourney_wrestlers.begin();tourney_wrestlers_itr!=tourney_wrestlers.end();tourney_wrestlers_itr++)
+     {
+        cout<<(*tourney_wrestlers_itr)<<endl;
+     }
+     
+     delete temp_ptr;
+}
+
+
+
+

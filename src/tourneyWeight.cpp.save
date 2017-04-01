@@ -1,0 +1,168 @@
+
+
+// Timothy Baker
+// cs361
+// Assg1: Wrestling Simulator
+//
+// tourneyWeight.cpp
+
+#include "tourneyWeight.h"
+
+/////// determine wrestler with most wins
+///////
+     //
+     //
+     //     bool most_wins(const wrestler* one,const wrestler* two)
+     //   {
+     //     return one->get_wins() < two->get_wins();
+     //}
+
+/////// constructor for tourney weight
+///////
+     //
+     //
+     tourney_weight::tourney_weight(int wc, wrestler* t1, wrestler* t2, wrestler* t3, wrestler* t4, wrestler* t5, wrestler* t6, wrestler* t7, wrestler* t8)
+     {
+
+        wrestler* temp_ptr= new wrestler;
+	if(t1==NULL){t1=temp_ptr;}
+        if(t2==NULL){t2=temp_ptr;}
+        if(t3==NULL){t3=temp_ptr;}
+        if(t4==NULL){t4=temp_ptr;}
+        if(t5==NULL){t5=temp_ptr;}
+        if(t6==NULL){t6=temp_ptr;}
+        if(t7==NULL){t7=temp_ptr;}
+        if(t8==NULL){t8=temp_ptr;}
+
+
+        weight_class=wc;
+	list<wrestler*> unsorted;
+	list<wrestler*>::iterator unsorted_itr;
+      
+        unsorted.push_back(t1);
+        unsorted.push_back(t2);
+        unsorted.push_back(t3);
+        unsorted.push_back(t4);
+        unsorted.push_back(t5);
+        unsorted.push_back(t6);
+        unsorted.push_back(t7);
+        unsorted.push_back(t8);
+
+
+	 unsorted_itr=unsorted.begin();
+	 while(unsorted_itr!=unsorted.end())
+	 {
+	      if((*unsorted_itr)->get_wins()>=seed1->get_wins())
+	      {
+                  // seed1=*unsorted_itr;
+              }
+              unsorted_itr++;
+	 }
+cout<<"test"<<endl;
+
+         unsorted_itr=unsorted.begin();
+         while(unsorted_itr!=unsorted.end())
+         {
+              if((*unsorted_itr)->get_wins()>=seed2->get_wins())
+              {
+		   if((*unsorted_itr)->get_id()!=seed1->get_id())
+		   {
+                       seed2=*unsorted_itr;
+		   }
+              }
+              unsorted_itr++;
+         }
+
+         unsorted_itr=unsorted.begin();
+         while(unsorted_itr!=unsorted.end())
+         {
+              if((*unsorted_itr)->get_wins()>=seed3->get_wins())
+              {
+                   if((*unsorted_itr)->get_id()!=seed1->get_id() && (*unsorted_itr)->get_id()!=seed2->get_id())
+                   {
+                       seed3=*unsorted_itr;
+                   }
+              }
+              unsorted_itr++;
+         }
+
+         unsorted_itr=unsorted.begin();
+         while(unsorted_itr!=unsorted.end())
+         {
+              if((*unsorted_itr)->get_wins()>=seed4->get_wins())
+              {
+                   if((*unsorted_itr)->get_id()!=seed1->get_id() && (*unsorted_itr)->get_id()!=seed2->get_id() && (*unsorted_itr)->get_id()!=seed3->get_id())
+                   {
+                       seed4=*unsorted_itr;
+                   }
+              }
+              unsorted_itr++;
+         }
+
+         unsorted_itr=unsorted.begin();
+         while(unsorted_itr!=unsorted.end())
+         {
+              if((*unsorted_itr)->get_wins()>=seed5->get_wins())
+              {
+                   if((*unsorted_itr)->get_id()!=seed1->get_id() && (*unsorted_itr)->get_id()!=seed2->get_id() && (*unsorted_itr)->get_id()!=seed3->get_id() && (*unsorted_itr)->get_id()!=seed4->get_id())
+                   {
+                       seed5=*unsorted_itr;
+                   }
+              }
+              unsorted_itr++;
+         }
+
+         unsorted_itr=unsorted.begin();
+         while(unsorted_itr!=unsorted.end())
+         {
+              if((*unsorted_itr)->get_wins()>=seed6->get_wins())
+              {
+                   if((*unsorted_itr)->get_id()!=seed1->get_id() && (*unsorted_itr)->get_id()!=seed2->get_id() && (*unsorted_itr)->get_id()!=seed3->get_id() && (*unsorted_itr)->get_id()!=seed4->get_id()
+	 	      && (*unsorted_itr)->get_id()!=seed5->get_id())
+                   {
+                       seed6=*unsorted_itr;
+                   }
+              }
+              unsorted_itr++;
+         }
+
+         unsorted_itr=unsorted.begin();
+         while(unsorted_itr!=unsorted.end())
+         {
+              if((*unsorted_itr)->get_wins()>=seed7->get_wins())
+              {
+                   if((*unsorted_itr)->get_id()!=seed1->get_id() && (*unsorted_itr)->get_id()!=seed2->get_id() && (*unsorted_itr)->get_id()!=seed3->get_id() && (*unsorted_itr)->get_id()!=seed4->get_id()
+                      && (*unsorted_itr)->get_id()!=seed5->get_id() && (*unsorted_itr)->get_id()!=seed6->get_id())
+                   {
+                       seed7=*unsorted_itr;
+                   }
+              }
+              unsorted_itr++;
+         }
+
+	 unsorted_itr=unsorted.begin();
+         while(unsorted_itr!=unsorted.end())
+         {
+              if((*unsorted_itr)->get_wins()>=seed8->get_wins())
+              {
+                   if((*unsorted_itr)->get_id()!=seed1->get_id() && (*unsorted_itr)->get_id()!=seed2->get_id() && (*unsorted_itr)->get_id()!=seed3->get_id() && (*unsorted_itr)->get_id()!=seed4->get_id()
+                      && (*unsorted_itr)->get_id()!=seed5->get_id() && (*unsorted_itr)->get_id()!=seed6->get_id() && (*unsorted_itr)->get_id()!=seed7->get_id())
+                   {
+                       seed8=*unsorted_itr;
+                   }
+              }
+              unsorted_itr++;
+         }
+
+
+         //tourney_wrestlers.sort(wrestler::most_wins); <--- such a broke piece of... :-)
+
+
+delete temp_ptr;
+//temp_ptr=seed_1=seed_2=seed_3=seed_4=seed_5=seed_6=seed_7=seed_8=NULL;
+
+}
+
+
+
+

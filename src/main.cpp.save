@@ -1,0 +1,386 @@
+// Timothy Baker
+// cs361
+// Assg1: Wrestling Simulator
+//
+// main.cpp
+
+#include <iostream>
+#include <iomanip>
+#include <fstream>
+#include <list>
+#include <random>
+#include <ctime>
+#include <thread>
+#include <string>
+#include "team.h"
+#include "meet.h"
+#include "tournament.h"
+#include "records.h"
+
+using namespace std;
+
+            ///\\\                        ///\\                        //
+           ////\\\\                      ////\\\                      ///
+          /////\\\\\                    /////\\\\                    ////
+         //////\\\\\\                  //////\\\\\                  /////
+        ///////\\\\\\\                ///////\\\\\\                //////
+       ////////\\\\\\\\              ////////\\\\\\\              ///////
+      /////////\\\\\\\\\            /////////\\\\\\\\            ////////
+     //////////\\\\\\\\\\          //////////\\\\\\\\\          /////////
+    ///////////\\\\\\\\\\\        ///////////\\\\\\\\\\        //////////
+   ////////////\\\\\\\\\\\\      ////////////\\\\\\\\\\\      ///////////
+  /////////////\\\\\\\\\\\\\    /////////////\\\\\\\\\\\\    ////////////
+ //////////////\\\\\\\\\\\\\\  //////////////\\\\\\\\\\\\\  /////////////
+///////////////\\\\\\\\\\\\\\\///////////////\\\\\\\\\\\\\\//////////////
+int main()
+{
+//
+///
+////
+/////
+//////
+///////
+/////// display intro
+///////
+     //
+     //
+     cout<<"intro"<<endl;
+
+/////// create random number engine seeded with time and uniform real distribution
+/////// agents for the integer numbers between 10 and 18; and 0 and 1.
+     //
+     //
+     default_random_engine random_eng(time(NULL));
+     uniform_real_distribution<double> real_dist_1(10, 19);
+     uniform_real_distribution<double> real_dist_2(0,2);
+     uniform_real_distribution<double> real_dist3(1,18);
+     uniform_real_distribution<double> real_dist4(0,20);
+
+/////// create two lists of teams with 10-18 wrestlers.  one a list of 8 conference
+/////// teams, and the other a list of 12 random teams.
+     //
+     //
+     list<team>conference_teams;
+     list<team>::iterator conference_teams_itr;
+     team* conference_teams_ptr;
+
+     for(int i=0;i<8;i++)
+     {
+          conference_teams_ptr = new team(real_dist_1(random_eng));
+          conference_teams.push_back(*conference_teams_ptr);
+     }
+
+
+     list<team>random_teams;
+     list<team>::iterator random_teams_itr;
+     team* random_teams_ptr = &*conference_teams.end();
+     random_teams_ptr++;
+
+     for(int i=0;i<12;i++)
+     {
+          random_teams_ptr = new team(real_dist_1(random_eng));
+          random_teams.push_back(*random_teams_ptr);
+     }
+
+/////// create record book with an entry for each player from each team using the
+/////// players unique ID.
+     //
+     //
+     int record_players=0;
+
+     conference_teams_itr = conference_teams.begin();
+     while(conference_teams_itr!= conference_teams.end())
+     {
+            record_players += conference_teams_itr->get_players();
+	    conference_teams_itr++;
+     }
+     random_teams_itr = random_teams.begin();
+     while(random_teams_itr!= random_teams.end()) 
+     {	
+	    record_players += random_teams_itr->get_players();
+            random_teams_itr++;
+     }
+
+     record_book record_book(record_players); //create record book with array sized record_players
+
+     conference_teams_itr = conference_teams.begin();
+     while(conference_teams_itr != conference_teams.end())
+     {    
+          static int team_id = 10000;
+	  conference_teams_itr->set_team_id(team_id);
+          int players = conference_teams_itr->get_players();
+          for(int i=0; i<players; i++)
+          {
+	       record_book.add_player(team_id, conference_teams_itr->get_wrestler(i).get_id(),conference_teams_itr->get_wrestler_ptr(i));
+               conference_teams_itr->reset_itr();
+          }
+          conference_teams_itr++;
+          team_id += 1;
+     }
+
+     random_teams_itr = random_teams.begin();
+     while(random_teams_itr != random_teams.end())
+     {
+          static int team_id = 20008;
+          random_teams_itr->set_team_id(team_id);
+          int players = random_teams_itr->get_players();
+          for(int i=0; i<players; i++)
+          {
+               record_book.add_player(team_id,random_teams_itr->get_wrestler(i).get_id(),random_teams_itr->get_wrestler_ptr(i));
+               random_teams_itr->reset_itr();
+          }
+          team_id += 1;
+          random_teams_itr++;
+     }
+
+/////// run scheduler to create 17 weeks of competition. each conference team meets
+/////// each other once, then meets 8 other random non-conference teams.
+     //
+     //
+     int scheduler[20][20];
+     for (int row=0;row<20;row++)
+     {
+	   for(int col=0;col<20;col++)
+	   {
+	       if(row==col){scheduler[row][col]=-1;}
+               else{scheduler[row][col]=0;}
+           }
+     }
+
+     for (int row=0; row<8;row++)
+     {
+	   bool checked_out=false;
+           for(int col=0;col<8;col++)
+	   {
+	        if(scheduler[row][col]==0)
+		{
+		    while(checked_out==false)
+		    {
+			checked_out=true;	
+	 	    	int week=real_dist3(random_eng);
+			for(int i=0;i<row;i++)
+			{
+			    if(week==scheduler[i][col])
+			    {
+			          checked_out=false;
+			    }
+			}
+			for (int i=0;i<col;i++)
+			{
+			    if(week==scheduler[row][i])
+			    {
+                                 checked_out=false;
+			    }
+                        }
+			if(week==6 || week==12)
+			{
+			    checked_out=false;
+ 	                }
+			if(checked_out==true)
+			{
+ 			     scheduler[row][col]=week;
+                             scheduler[col][row]=week;
+			}
+		    }
+		    checked_out=false;
+		}
+
+           }
+     }
+
+     for (int row=0; row<8;row++)
+     {
+           int less_than_eight=0;
+	   while(less_than_eight<8)
+ 	   {
+                bool checked_out=false;
+		int disaster_blaster=0;
+                int col=real_dist4(random_eng);
+                if(scheduler[row][col]==0)
+                {
+                     while(checked_out==false)
+                     {    disaster_blaster++;	
+	  	          checked_out=true;
+                          int week=real_dist3(random_eng);
+			  for(int i=0;i<20;i++)
+                          { 
+                               if(week==scheduler[i][col])
+                               {
+                                   checked_out=false;
+                               }
+                          }
+                          for (int i=0;i<20;i++)
+                          { 
+                              if(week==scheduler[row][i])
+                              {
+                                  checked_out=false;
+                              }
+                          }
+                          if(week==6 || week==12)
+                          {
+                               checked_out=false;
+                          }
+                          if(checked_out==true)
+                          {
+                               scheduler[row][col]=week;
+                               scheduler[col][row]=week;
+			       less_than_eight++;
+                          }
+			  if(disaster_blaster>20){break;} // team can't play that week geez ok
+		      }
+	         }
+            }
+      }
+
+/////// Meet for the first five weeks of regular season matches
+/////// 
+     //
+     //
+     weak_meeter(1, scheduler, conference_teams.begin(), random_teams.begin(), record_book);
+     weak_meeter(2, scheduler, conference_teams.begin(), random_teams.begin(), record_book);
+     weak_meeter(3, scheduler, conference_teams.begin(), random_teams.begin(), record_book);
+     weak_meeter(4, scheduler, conference_teams.begin(), random_teams.begin(), record_book);
+     weak_meeter(5, scheduler, conference_teams.begin(), random_teams.begin(), record_book);
+
+/////// week 6 tournament week 1
+///////
+     //
+     //
+
+
+/////// meet for weeks 7-11
+///////
+     //
+     //
+     weak_meeter(7, scheduler, conference_teams.begin(), random_teams.begin(), record_book);
+     weak_meeter(8, scheduler, conference_teams.begin(), random_teams.begin(), record_book);
+     weak_meeter(9, scheduler, conference_teams.begin(), random_teams.begin(), record_book);
+     weak_meeter(10, scheduler,conference_teams.begin(), random_teams.begin(), record_book);
+     weak_meeter(11, scheduler, conference_teams.begin(), random_teams.begin(), record_book);
+
+/////// week 12 tournament week 2
+///////
+     //
+     //
+
+
+/////// meet for weeks 13-17
+///////
+     //
+     //
+     weak_meeter(13, scheduler, conference_teams.begin(), random_teams.begin(), record_book);
+     weak_meeter(14, scheduler, conference_teams.begin(), random_teams.begin(), record_book);
+     weak_meeter(15, scheduler, conference_teams.begin(), random_teams.begin(), record_book);
+     weak_meeter(16, scheduler, conference_teams.begin(), random_teams.begin(), record_book);
+     weak_meeter(17, scheduler, conference_teams.begin(), random_teams.begin(), record_book);
+
+/////// conference tournament BLADOW!!!
+///////
+     //
+     //
+
+/////// display season champion, send season results to output files
+///////
+     //
+     //
+
+
+/////// Testing Ground
+///////
+     //
+     //
+     cout<<"team id"<<"\t"<<"wrestlers"<<"\t"<<endl;
+     conference_teams_itr=conference_teams.begin();
+     while(conference_teams_itr!=conference_teams.end())
+     {
+         cout<< conference_teams_itr->get_team_id()<<"\t"<< conference_teams_itr->get_players()<<"\t"<<endl;
+         conference_teams_itr++;
+     }
+
+     random_teams_itr=random_teams.begin();
+     while(random_teams_itr!=random_teams.end())
+     {
+         cout<< random_teams_itr->get_team_id()<<"\t"<< random_teams_itr->get_players()<<"\t"<<endl;
+	 random_teams_itr++;
+     }
+     string lister="";
+     int selection=0;
+     bool done=false;
+  
+     while(done==false)
+     {   
+         cout<<"\nList Players from a team?(y/n)"<<endl;
+         cin>>lister;
+         cout<<endl;
+         if(lister=="y"){done=false;}
+         else{done=true;}
+         if(done==false)
+         {
+               cout<<"Enter team id(integer values ONLY!): ";
+	       cin>>selection;
+	       cout<<endl;
+               conference_teams_itr=conference_teams.begin();
+	       while(conference_teams_itr!=conference_teams.end())
+               {
+                    if(selection==conference_teams_itr->get_team_id())
+                    {
+                          conference_teams_itr->print_wrestlers();
+	 	 	  cout<<endl;
+	                  conference_teams_itr->print_selected_wrestlers();
+			  cout<<endl;
+                    }
+                    conference_teams_itr++;
+               }
+               random_teams_itr=random_teams.begin();
+               while(random_teams_itr!=random_teams.end())
+               {
+                    if(selection==random_teams_itr->get_team_id())
+                    {
+                         random_teams_itr->print_wrestlers();
+	  	 	 cout<<endl;
+		         random_teams_itr->print_selected_wrestlers();
+		  	 cout<<endl;
+                    }
+                    random_teams_itr++;
+               }
+
+          }
+     }
+	
+     for(int row=0;row<20;row++)
+     {	
+	  for(int col=0;col<20;col++)
+	  {
+              cout<<setw(2)<<scheduler[row][col]<<" ";
+          }
+	  cout<<endl;
+     }
+
+     ofstream records;
+     records.open("record_book.txt");
+     record_book.print(records);
+     records.close();
+
+///////
+//////
+/////
+////
+///
+//
+     return 0;
+}
+///////////////\\\\\\\\\\\\\\\///////////////\\\\\\\\\\\\\\\///////////////
+//////////////  \\\\\\\\\\\\\\//////////////  \\\\\\\\\\\\\\//////////////
+/////////////    \\\\\\\\\\\\\/////////////    \\\\\\\\\\\\\/////////////
+////////////      \\\\\\\\\\\\////////////      \\\\\\\\\\\\////////////
+///////////        \\\\\\\\\\\///////////        \\\\\\\\\\\///////////
+//////////          \\\\\\\\\\//////////          \\\\\\\\\\//////////
+/////////            \\\\\\\\\/////////            \\\\\\\\\/////////
+////////              \\\\\\\\////////              \\\\\\\\////////
+///////                \\\\\\\///////                \\\\\\\///////
+//////                  \\\\\\//////                  \\\\\\//////
+/////                    \\\\\/////                    \\\\\/////
+////                      \\\\////                      \\\\////
+///                        \\\///                        \\\///
+//                          \\//                          \\//
+
